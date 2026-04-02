@@ -19,6 +19,7 @@ class User(db.Model):
     )
     name = db.Column(db.String(100))
     phone_number = db.Column(db.String(100), nullable=False)
+    bookings = db.relationship('Booking', backref='user', lazy=True)
 
     def __repr__(self):
         return f'<User: {self.name}>'
@@ -29,7 +30,9 @@ class Agency(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     # Using server_default ensures the database handles the timezone generation
+    name = db.Column(db.String(100), nullable=False)
     departure_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
+    bookings = db.relationship('Booking', backref='agency', lazy=True)
 
 
 class Booking(db.Model):
@@ -50,6 +53,7 @@ class Booking(db.Model):
     
     price = db.Column(db.Numeric(10, 2), nullable=False)
     is_cancelled = db.Column(db.Boolean, nullable=False, default=False)
+    # name = db.Column(db.String(100), nullable=False)
 
     # Pointing exactly to the __tablename__ strings defined above
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)

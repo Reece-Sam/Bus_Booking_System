@@ -1,8 +1,9 @@
 from flask import Flask
 from extensions import db
 from models import User, Agency, Booking
-from user import user_bp   # 👈 import blueprint
+from user import user_bp   
 from booking import booking_bp
+from agency import agency_bp
 
 app = Flask(__name__)
 
@@ -16,9 +17,12 @@ app.register_blueprint(user_bp)
 
 app.register_blueprint(booking_bp)
 
+app.register_blueprint(agency_bp)
+
 
 # Create tables
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 @app.route('/')
