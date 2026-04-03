@@ -11,10 +11,39 @@ agency_bp = Blueprint('agency_bp', __name__)
 #This route creates agency 
 @agency_bp.route('/agencies', methods=['POST'])
 def create_agency():
+    """
+    Create Agency
+    ---
+    tags:
+      - Agency
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - departure_time
+            properties:
+              name:
+                type: string
+                example: Finexs Travel
+              departure_time:
+                type: string
+                format: date-time
+                example: "2026-04-05T14:30:00"
+    responses:
+      201:
+        description: Agency created successfully
+      400:
+        description: Missing fields or invalid datetime format
+    """
+
     data = request.get_json()
 
     name = data.get('name')
-    departure_time = data.get('departure_time')  # expect ISO format string
+    departure_time = data.get('departure_time')
 
     if not name or not departure_time:
         return jsonify({"error": "Missing required fields"}), 400
@@ -45,6 +74,16 @@ def create_agency():
 #This route gets all agency
 @agency_bp.route('/agencies', methods=['GET'])
 def get_agencies():
+    """
+    Get All Agencies
+    ---
+    tags:
+      - Agency
+    responses:
+      200:
+        description: List of agencies
+    """
+
     agencies = Agency.query.all()
 
     result = []
@@ -61,6 +100,25 @@ def get_agencies():
 #This routes gets agency by Id
 @agency_bp.route('/agencies/<int:id>', methods=['GET'])
 def get_agency(id):
+    """
+    Get Agency by ID
+    ---
+    tags:
+      - Agency
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Agency ID
+    responses:
+      200:
+        description: Agency found
+      404:
+        description: Agency not found
+    """
+
     agency = db.session.get(Agency, id)
 
     if agency is None:
@@ -76,6 +134,41 @@ def get_agency(id):
 #This route updates agency by Id
 @agency_bp.route('/agencies/<int:id>', methods=['PATCH'])
 def update_agency(id):
+    """
+    Update Agency
+    ---
+    tags:
+      - Agency
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Agency ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Updated Agency Name
+              departure_time:
+                type: string
+                format: date-time
+                example: "2026-04-06T10:00:00"
+    responses:
+      200:
+        description: Agency updated successfully
+      400:
+        description: Invalid datetime format
+      404:
+        description: Agency not found
+    """
+
     agency = db.session.get(Agency, id)
 
     if agency is None:
@@ -107,6 +200,25 @@ def update_agency(id):
 #This route deletes agency by id 
 @agency_bp.route('/agencies/<int:id>', methods=['DELETE'])
 def delete_agency(id):
+    """
+    Delete Agency
+    ---
+    tags:
+      - Agency
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Agency ID
+    responses:
+      200:
+        description: Agency deleted successfully
+      404:
+        description: Agency not found
+    """
+
     agency = db.session.get(Agency, id)
 
     if agency is None:
@@ -116,5 +228,4 @@ def delete_agency(id):
     db.session.commit()
 
     return jsonify({"message": "Agency deleted"}), 200
-
 

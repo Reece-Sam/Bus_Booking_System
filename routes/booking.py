@@ -11,6 +11,38 @@ booking_bp = Blueprint('booking_bp', __name__)
 #This route creates a booking
 @booking_bp.route('/bookings', methods=['POST'])
 def create_booking():
+    """
+    Create Booking
+    ---
+    tags:
+      - Booking
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - user_id
+              - agency_id
+              - price
+            properties:
+              user_id:
+                type: integer
+                example: 1
+              agency_id:
+                type: integer
+                example: 2
+              price:
+                type: number
+                example: 5000
+    responses:
+      201:
+        description: Booking created successfully
+      400:
+        description: Missing required fields
+    """
+
     data = request.get_json()
 
     user_id = data.get('user_id')
@@ -47,6 +79,16 @@ def create_booking():
 #This route gets all booking 
 @booking_bp.route('/bookings', methods=['GET'])
 def get_bookings():
+    """
+    Get All Bookings
+    ---
+    tags:
+      - Booking
+    responses:
+      200:
+        description: List of bookings
+    """
+
     bookings = Booking.query.all()
 
     result = []
@@ -67,6 +109,25 @@ def get_bookings():
 #This routes gets booking by on Id 
 @booking_bp.route('/bookings/<int:id>', methods=['GET'])
 def get_booking(id):
+    """
+    Get Booking by ID
+    ---
+    tags:
+      - Booking
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Booking ID
+    responses:
+      200:
+        description: Booking found
+      404:
+        description: Booking not found
+    """
+
     booking = db.session.get(Booking, id)
 
     if booking is None:
@@ -86,6 +147,27 @@ def get_booking(id):
 #This route updates or cancels booking by Id 
 @booking_bp.route('/bookings/<int:id>/cancel', methods=['PATCH'])
 def cancel_booking(id):
+    """
+    Cancel Booking
+    ---
+    tags:
+      - Booking
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Booking ID
+    responses:
+      200:
+        description: Booking cancelled successfully
+      400:
+        description: Already cancelled or less than 3 hours to departure
+      404:
+        description: Booking or agency not found
+    """
+
     booking = db.session.get(Booking, id)
 
     if booking is None:
@@ -101,7 +183,6 @@ def cancel_booking(id):
     departure_time = booking.agency.departure_time
     now = datetime.now()
 
-     #The 3hrs cancelation policy
     if departure_time - now < timedelta(hours=3):
         return jsonify({
             "error": "Cannot cancel less than 3 hours before departure"
@@ -121,6 +202,41 @@ def cancel_booking(id):
 #This routes updates booking by Id
 @booking_bp.route('/bookings/<int:id>', methods=['PATCH'])
 def update_booking(id):
+    """
+    Update Booking
+    ---
+    tags:
+      - Booking
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Booking ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              price:
+                type: number
+                example: 6000
+              user_id:
+                type: integer
+                example: 2
+              agency_id:
+                type: integer
+                example: 3
+    responses:
+      200:
+        description: Booking updated successfully
+      404:
+        description: Booking, user, or agency not found
+    """
+
     data = request.get_json()
 
     booking = db.session.get(Booking, id)
@@ -161,6 +277,25 @@ def update_booking(id):
 #This routes deletes booking by Id 
 @booking_bp.route('/bookings/<int:id>', methods=['DELETE'])
 def delete_booking(id):
+    """
+    Delete Booking
+    ---
+    tags:
+      - Booking
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Booking ID
+    responses:
+      200:
+        description: Booking deleted successfully
+      404:
+        description: Booking not found
+    """
+
     booking = db.session.get(Booking, id)
 
     if booking is None:
