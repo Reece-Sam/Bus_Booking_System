@@ -108,3 +108,5 @@ DELETE /bookings<int:id>
 ├── docs/
 │   └── Bus_system.drawio
 └── requirements.txt
+
+9. I also tested the endpoints on hoppscotch and it works fine
