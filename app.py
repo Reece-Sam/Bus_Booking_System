@@ -6,11 +6,14 @@ from routes.user import user_bp
 from routes.booking import booking_bp
 from routes.agency import agency_bp
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 import os
 
 load_dotenv()
 app = Flask(__name__)
+
+CORS(app)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Kange24@localhost/bus_booking'
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('DATABASE_URL')
