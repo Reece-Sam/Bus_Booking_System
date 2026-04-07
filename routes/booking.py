@@ -12,36 +12,36 @@ booking_bp = Blueprint('booking_bp', __name__)
 @booking_bp.route('/bookings', methods=['POST'])
 def create_booking():
     """
-    Create Booking
-    ---
-    tags:
-      - Booking
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - user_id
-              - agency_id
-              - price
-            properties:
-              user_id:
-                type: integer
-                example: 1
-              agency_id:
-                type: integer
-                example: 2
-              price:
-                type: number
-                example: 5000
-    responses:
-      201:
-        description: Booking created successfully
-      400:
-        description: Missing required fields
-    """
+Create Booking
+---
+tags:
+  - Booking
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - user_id
+        - agency_id
+        - price
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        agency_id:
+          type: integer
+          example: 2
+        price:
+          type: number
+          example: 5000
+responses:
+  201:
+    description: Booking created successfully
+  400:
+    description: Missing required fields
+"""
 
     data = request.get_json()
 

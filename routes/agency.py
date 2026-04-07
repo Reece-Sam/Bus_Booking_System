@@ -11,57 +11,56 @@ agency_bp = Blueprint('agency_bp', __name__)
 #This route creates agency 
 @agency_bp.route('/agencies', methods=['POST'])
 def create_agency():
-    """
-    Create Agency
-    ---
-    tags:
-      - Agency
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-              - departure_time
-            properties:
-              name:
-                type: string
-                example: Finexs Travel
-              departure_time:
-                type: string
-                format: date-time
-                example: "2026-04-05T14:30:00"
-    responses:
-      201:
-        description: Agency created successfully
-      400:
-        description: Missing fields or invalid datetime format
-    """
+  """
+Create Agency
+---
+tags:
+  - Agency
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - name
+        - departure_time
+      properties:
+        name:
+          type: string
+          example: Finexs Travel
+        departure_time:
+          type: string
+          format: date-time
+          example: "2026-04-05T14:20:00"
+responses:
+  201:
+    description: Agency created successfully
+  400:
+    description: Missing fields or invalid datetime format
+"""
+  data = request.get_json()
 
-    data = request.get_json()
+  name = data.get('name')
+  departure_time = data.get('departure_time')
 
-    name = data.get('name')
-    departure_time = data.get('departure_time')
-
-    if not name or not departure_time:
+  if not name or not departure_time:
         return jsonify({"error": "Missing required fields"}), 400
 
-    try:
+  try:
         departure_time = datetime.fromisoformat(departure_time)
-    except ValueError:
+  except ValueError:
         return jsonify({"error": "Invalid datetime format"}), 400
 
-    agency = Agency(
+  agency = Agency(
         name=name,
         departure_time=departure_time
     )
 
-    db.session.add(agency)
-    db.session.commit()
+  db.session.add(agency)
+  db.session.commit()
 
-    return jsonify({
+  return jsonify({
         "message": "Agency created",
         "agency": {
             "id": agency.id,

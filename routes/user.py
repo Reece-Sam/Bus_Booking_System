@@ -8,43 +8,45 @@ user_bp = Blueprint('user_bp', __name__)
 # This route creates users
 @user_bp.route('/users', methods=['POST'])
 def create_user():
-    """
-    Create User
-    ---
-    tags:
-      - Users
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-              - phone_number
-            properties:
-              name:
-                type: string
-                example: John Doe
-              phone_number:
-                type: string
-                example: "237612345678"
-    responses:
-      200:
-        description: User created successfully
-    """
+   """
+Create User
+---
+tags:
+  - Users
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - name
+        - phone_number
+      properties:
+        name:
+          type: string
+          example: John Doe
+        phone_number:
+          type: string
+          example: "237612345678"
+responses:
+  201:
+    description: User created successfully
+  400:
+    description: Missing required fields
+"""
 
-    data = request.get_json()
+   data = request.get_json()
 
-    user = User(
+   user = User(
         name=data.get('name'),
         phone_number=data.get('phone_number')
     )
 
-    db.session.add(user)
-    db.session.commit()
+   db.session.add(user)
+   db.session.commit()
 
-    return jsonify({"message": "User created", "user_id": user.id})
+   return jsonify({"message": "User created", "user_id": user.id})
 
 # #This routes gets users
 # @user_bp.route('/users', methods=['GET'])
